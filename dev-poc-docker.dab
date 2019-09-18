@@ -1,0 +1,57 @@
+{
+  "Services": {
+    "db": {
+      "Env": [
+        "POSTGRES_USER=sonar",
+        "POSTGRES_PASSWORD=sonar"
+      ],
+      "Image": "postgres@sha256:be456a40361cd836e0e1b35fc4d872e20e138f214c93138425169c4a2dfe1b0e",
+      "Networks": [
+        "sonarnet"
+      ]
+    },
+    "jenkins": {
+      "Env": [
+        "JENKINS_HOME=/var/lib/jenkins",
+        "JAVA_OPTS=-Duser.timezone=Asia/Calcutta",
+        "JENKINS_JAVA_OPTIONS=\"-Djava.awt.headless=true -Dhudson.model.DirectoryBrowserSupport.CSP=\\\"default-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' 'unsafe-inline' data:;\\\"\""
+      ],
+      "Image": "jenkins/jenkins@sha256:93ed98e7b1235a8711100feb7fdf970003a065afc6607e4dde6097e238ca48a6",
+      "Networks": [
+        "sonarnet"
+      ],
+      "Ports": [
+        {
+          "Port": 8080,
+          "Protocol": "tcp"
+        },
+        {
+          "Port": 50000,
+          "Protocol": "tcp"
+        }
+      ],
+      "User": "root"
+    },
+    "sonarqube": {
+      "Args": [
+        "-Dsonar.ce.javaOpts=-Xmx1192m",
+        "-Dsonar.web.javaOpts=-Xmx1192m",
+        "-Dsonar.search.javaAdditionalOpts=-Dnode.store.allow_mmapfs=false"
+      ],
+      "Env": [
+        "sonar.jdbc.url=jdbc:postgresql://db:5432/sonar"
+      ],
+      "Image": "sonarqube@sha256:032ae6e1021533a3731d5c6c0547615dea8d888dcec58802f8db3a9bd6f26237",
+      "Networks": [
+        "sonarnet"
+      ],
+      "Ports": [
+        {
+          "Port": 9000,
+          "Protocol": "tcp"
+        }
+      ]
+    }
+  },
+  "Version": "0.1"
+}
